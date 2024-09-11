@@ -1,0 +1,7 @@
+.task-item.done{
+    background-color: #ddd !important;
+}
+
+.task-item.pending {
+    background-color: rgba(255, 0, 0, 0.411) !important;
+}
