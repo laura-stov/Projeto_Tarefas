@@ -58,7 +58,7 @@
             <form method="POST" action="{% url 'alterar-status' tarefa.id %}" style="display:inline;">
                 {% csrf_token %}
                 <span><a href="/tarefa/{{ tarefa.id }}">{{ tarefa.titulo }}</a></span>
-                <select name="status" onchange="this.form.submit()">
+                <select id="status" name="status" onchange="this.form.submit()">
                     <option value="doing" {% if tarefa.done == 'doing' %}selected{% endif %}>Em andamento</option>
                     <option value="done" {% if tarefa.done == 'done' %}selected{% endif %}>Concluída</option>
                     <option value="pending" {% if tarefa.done == 'pending' %}selected{% endif %}>Pendente</option>

@@ -8,6 +8,7 @@ from django.contrib.auth import logout
 from django.utils import timezone
 from django.contrib.auth import get_user_model
 from .models import Tarefa
+from django.contrib.auth.models import User
 import datetime
 
 @login_required
@@ -42,14 +43,14 @@ def veTarefa(request, id):
 
 @login_required
 def novaTarefa(request):
+    user_queryset = User.objects.all()
+    
     if request.method == 'POST':
-        formulario = TarefaFormulario(request.POST)
+        formulario = TarefaFormulario(request.POST, user_queryset=user_queryset)
         
         #conferindo se os dados são válidos
         if formulario.is_valid():
-            tarefa = formulario.save(commit=False)
-            tarefa.done = 'doing'
-            tarefa.user = request.user
+            tarefa = formulario.save()
             tarefa.save()
             messages.info(request, 'Tarefa criada com sucesso!')
             
@@ -57,16 +58,17 @@ def novaTarefa(request):
             return redirect('/')
             
     else:
-        formulario = TarefaFormulario()
+        formulario = TarefaFormulario(user_queryset=user_queryset)
         return render(request, 'tarefas/adicionartarefas.html', {'formulario': formulario})
 
 @login_required
 def editarTarefa(request, id):
     tarefa = get_object_or_404(Tarefa, pk=id)
     formulario = TarefaFormulario(instance=tarefa)
+    user_queryset = User.objects.all()
     
     if(request.method == 'POST'):
-        formulario = TarefaFormulario(request.POST, instance=tarefa)
+        formulario = TarefaFormulario(request.POST, instance=tarefa, user_queryset=user_queryset)
         
         if(formulario.is_valid()):
             tarefa = formulario.save()
@@ -77,7 +79,6 @@ def editarTarefa(request, id):
             return render(request, 'tarefas/editartarefa.html', {'formulario': formulario, 'tarefa': tarefa})
             
     else:
-        users = get_user_model().objects.all()
         return render(request, 'tarefas/editartarefa.html', {'formulario': formulario, 'tarefa': tarefa})
 
 @login_required
